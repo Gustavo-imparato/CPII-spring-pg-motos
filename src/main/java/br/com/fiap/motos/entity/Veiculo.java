@@ -1,5 +1,6 @@
 package br.com.fiap.motos.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,9 +15,14 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 
-
+@Entity
+@Table(name = "TB_VEICULO")
 public class Veiculo {
 
+    @Id
+    @SequenceGenerator(name = "SQ_VEICULO", sequenceName = "SQ_VEICULO", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_VEICULO")
+    @Column(name = "ID_VEICULO")
     private Long id;
 
     private String nome;
@@ -36,8 +42,24 @@ public class Veiculo {
 
     private Fabricante fabricante;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(
+            name = "TIPO_VEICULO",
+            referencedColumnName = "ID_TIPO_VEICULO",
+            foreignKey = @ForeignKey(
+                    name = "FK_TIPO_VEICULO"
+            )
+    )
     private TipoVeiculo tipo;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(
+            name = "ACESSORIO",
+            referencedColumnName = "ID_ACESSORIO",
+            foreignKey = @ForeignKey(
+                    name = "FK_ACESSORIO"
+            )
+    )
     private Set<Acessorio> acessorios = new LinkedHashSet<>();
 
 }
